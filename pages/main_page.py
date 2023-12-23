@@ -1,0 +1,70 @@
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+
+
+class MainPage():
+    _DRIVER = None
+
+    def __init__(self, driver, URL):        
+        self._DRIVER = driver
+        self._DRIVER.implicitly_wait(3)
+        self._DRIVER.get(URL)
+        self._DRIVER.maximize_window()
+        
+
+    # Header           
+    def get_nav_bar_item(self, item_idx):
+        nav_bar = self._DRIVER.find_element(By.XPATH, '//ul[@class="navbar__links d-none d-lg-flex"]')
+        return nav_bar.find_elements(By.TAG_NAME, 'li')[item_idx]
+    
+    def get_search_bar(self):
+        return self._DRIVER.find_elements(By.CLASS_NAME, 'navbar__search--input')[1]
+
+    # Body
+    def get_scrum_learning_item(self):
+        categories = self._DRIVER.find_elements(By.CLASS_NAME, 'category__name')
+        for category in categories:
+            if 'scrum' in category.get_attribute('innerHTML').lower():
+                return category
+
+    def get_logo_img(self):
+        return self._DRIVER.find_element(By.CLASS_NAME, 'tools-qa-header__logo')
+
+    def get_enroll_button(self):
+        return self._DRIVER.find_element(By.XPATH, '//a[@href="/selenium-training?q=banner#enroll-form"]')
+    
+    def get_read_more_banner(self):
+        return self._DRIVER.find_element(By.CLASS_NAME, 'new-training__read-more')
+
+    def get_training_batch_announcment_text(self):
+        return self._DRIVER.find_element(By.CLASS_NAME, 'new-training__starting').text
+    
+    def get_cypress_tutorial(self):
+        tutorials_menu = self._DRIVER.find_element(By.XPATH, '//a[@class="navbar__tutorial-menu"]').click()
+        menu_items = self._DRIVER.find_elements(By.TAG_NAME, 'span')
+        for item in menu_items:
+            if 'front' in item.text.lower():
+                front_end_item = item
+                front_end_item.click()
+                print(item.text)
+                
+        # Need to specifiy via parents
+        cypress_button = self._DRIVER.find_element(By.XPATH, '//a[@href="//cypress-tutorial/"]')
+        return tutorials_menu, front_end_item, cypress_button
+
+    def get_postman_tutorial_redirect(self):
+        tutorials = self._DRIVER.find_elements(By.CLASS_NAME, 'category__name')
+        for tutorial in tutorials:
+            if 'postman' in tutorial.lower():
+                return tutorial
+
+    def get_latest_articles_button(self):
+        return self._DRIVER.find_element(By.XPATH, '//a[@href="/articles"]')
+
+
+    # Footer 
+    def get_find_us_icons(self):
+        return self._DRIVER.find_elements(By.CLASS_NAME, 'profile-type')
+        #for icon in icons:
+        #    if 'facebook' in icon.get_attribute('innerHTML').lower():
+        #        return icon

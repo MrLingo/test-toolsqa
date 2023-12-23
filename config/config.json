@@ -1,0 +1,7 @@
+{
+	browsers: [
+	    "Firefox",
+		"Edge"
+	],
+    "main_page" : "https://toolsqa.com/"	
+}
