@@ -67,7 +67,7 @@ class MainPage():
     def get_latest_articles_button(self):
         return self._DRIVER.find_element(By.XPATH, '//a[@href="/articles"]')
 
-    # Footer 
+    # Footer
     def get_find_us_icons(self):
         return self._DRIVER.find_elements(By.CLASS_NAME, 'profile-type')
         #for icon in icons:
