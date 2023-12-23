@@ -4,12 +4,15 @@ from pages.main_page import MainPage
 class TestMainPage():
     _main_page = None
     _DRIVER = None
+    _OPTIONS = None
 
-    def __init__(self, browser, URL):
+    def __init__(self, browser, URL, headless_mode):        
         if(browser == 'Firefox'):
-            self._DRIVER = webdriver.Firefox()
+            self._OPTIONS = webdriver.FirefoxOptions().add_argument('--headless=new') if headless_mode else None
+            self._DRIVER = webdriver.Firefox(options=self._OPTIONS)                        
         elif(browser == 'Edge'):
-            self._DRIVER = webdriver.Edge()
+            self._OPTIONS = webdriver.EdgeOptions().add_argument('--headless=new') if headless_mode else None
+            self._DRIVER = webdriver.Edge(options=self._OPTIONS)
 
         self._main_page = MainPage(self._DRIVER, URL)
 
@@ -93,11 +96,11 @@ class TestMainPage():
     
 MAIN_PAGE_URL = 'https://toolsqa.com/'
 BROWSERS = ['Firefox']
-HEADLESS_MODE = False
+HEADLESS_MODE = True
 
 # Test on all browsers
 for browser in BROWSERS:
-    test_main_page = TestMainPage(browser, MAIN_PAGE_URL)
+    test_main_page = TestMainPage(browser, MAIN_PAGE_URL, HEADLESS_MODE)
 
     # Chain by section
     # Header
