@@ -18,7 +18,11 @@ class MainPage():
         return nav_bar.find_elements(By.TAG_NAME, 'li')[item_idx]
     
     def get_search_bar(self):
-        return self._DRIVER.find_elements(By.CLASS_NAME, 'navbar__search--input')[1]
+        try:
+            return self._DRIVER.find_elements(By.CLASS_NAME, 'navbar__search--input')[1]
+        except:
+            return self._DRIVER.find_elements(By.CLASS_NAME, 'navbar__search--input')[0]
+        
 
     # Body
     def get_scrum_learning_item(self):
@@ -39,28 +43,29 @@ class MainPage():
     def get_training_batch_announcment_text(self):
         return self._DRIVER.find_element(By.CLASS_NAME, 'new-training__starting').text
     
+    # TO FINISH
     def get_cypress_tutorial(self):
         tutorials_menu = self._DRIVER.find_element(By.XPATH, '//a[@class="navbar__tutorial-menu"]').click()
         menu_items = self._DRIVER.find_elements(By.TAG_NAME, 'span')
         for item in menu_items:
+            print(item.text)
             if 'front' in item.text.lower():
                 front_end_item = item
                 front_end_item.click()
-                print(item.text)
                 
         # Need to specifiy via parents
-        cypress_button = self._DRIVER.find_element(By.XPATH, '//a[@href="//cypress-tutorial/"]')
-        return tutorials_menu, front_end_item, cypress_button
+        cypress_button = self._DRIVER.find_elements(By.XPATH, '//a[@href="/cypress-tutorial/"]')
+        cypress_button = cypress_button[1]
+        return cypress_button
 
     def get_postman_tutorial_redirect(self):
         tutorials = self._DRIVER.find_elements(By.CLASS_NAME, 'category__name')
         for tutorial in tutorials:
-            if 'postman' in tutorial.lower():
+            if 'postman' in tutorial.text.lower():
                 return tutorial
 
     def get_latest_articles_button(self):
         return self._DRIVER.find_element(By.XPATH, '//a[@href="/articles"]')
-
 
     # Footer 
     def get_find_us_icons(self):

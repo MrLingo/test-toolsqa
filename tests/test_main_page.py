@@ -19,9 +19,13 @@ class TestMainPage():
 
         for window in handles:
             if window != curr_window_handle:
-                self._DRIVER.switch_to.window(handles[0])
+                self._DRIVER.switch_to.window(curr_window_handle)
                 return self
             
+    def go_back(self):
+        self._DRIVER.back()
+        return self
+
     def get_current_window(self):
         return self._DRIVER.current_window_handle
 
@@ -50,6 +54,7 @@ class TestMainPage():
         return self
                                
     def type_into_search_field(self, text):
+        self._main_page.get_search_bar().clear()
         self._main_page.get_search_bar().send_keys(text)
         return self
     
@@ -59,7 +64,7 @@ class TestMainPage():
 
     def click_cypress_tutorial(self):
 
-        self._main_page.get_cypress_tutorial()
+        self._main_page.get_cypress_tutorial().click()
         return self
 
     # Body
@@ -70,7 +75,7 @@ class TestMainPage():
             return self
     
     def click_postman_tutorial(self):
-        self._main_page.click_postman_tutorial()
+        self._main_page.get_postman_tutorial_redirect().click()
         return self
 
     # To switch handle
@@ -88,7 +93,7 @@ class TestMainPage():
     
 MAIN_PAGE_URL = 'https://toolsqa.com/'
 BROWSERS = ['Firefox']
-HEDLESS_MODE = False
+HEADLESS_MODE = False
 
 # Test on all browsers
 for browser in BROWSERS:
@@ -98,20 +103,20 @@ for browser in BROWSERS:
     # Header
     test_main_page.click_logo_img() \
                   .click_home_nav_item() \
-                  .click_selenium_train_nav_item() \
-                  .click_cypress_tutorial()
+                  .click_selenium_train_nav_item()
+                  #.click_cypress_tutorial()
      
     curr_window = test_main_page.get_current_window()
     
-    test_main_page.click_demo_site_nav_item()
-    test_main_page.go_to_original_tab(curr_window)
-    test_main_page.click_about_nav_item()
-            
-    test_main_page.type_into_search_field('testing input field')
+    test_main_page.click_demo_site_nav_item() \
+    .go_to_original_tab(curr_window) \
+    .click_about_nav_item() \
+    .type_into_search_field('testing input field')
                   
     # Body
     test_main_page.get_training_batch_announcment_text() \
     .click_postman_tutorial() \
+    .go_back() \
     .click_scrum_category()
 
     test_main_page.__exit__()
