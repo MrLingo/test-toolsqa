@@ -45,7 +45,7 @@ class MainPage():
     
     # TO FINISH
     def get_cypress_tutorial(self):
-        tutorials_menu = self._DRIVER.find_element(By.XPATH, '//a[@class="navbar__tutorial-menu"]').click()
+        #tutorials_menu = self._DRIVER.find_element(By.XPATH, '//a[@class="navbar__tutorial-menu"]').click()
         menu_items = self._DRIVER.find_elements(By.TAG_NAME, 'span')
         for item in menu_items:
             print(item.text)
