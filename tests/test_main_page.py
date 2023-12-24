@@ -66,11 +66,6 @@ class TestMainPage():
         print("Announcement text: ", self._main_page.get_training_batch_announcment_text())
         return self
 
-    def click_cypress_tutorial(self):
-
-        self._main_page.get_cypress_tutorial().click()
-        return self
-
     # Body
     def click_enroll_button(self):
         enroll_element = self._main_page.get_enroll_button()
@@ -114,7 +109,6 @@ for browser in BROWSERS:
     test_main_page.click_logo_img() \
                   .click_home_nav_item() \
                   .click_selenium_train_nav_item()
-                  #.click_cypress_tutorial()
      
     curr_window = test_main_page.get_current_window()
     
@@ -138,5 +132,5 @@ for browser in BROWSERS:
     .go_back() \
     .click_social_media_link('youtube') \
     .go_back()
-
+    
     test_main_page.__exit__()

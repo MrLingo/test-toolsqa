@@ -43,21 +43,6 @@ class MainPage():
     def get_training_batch_announcment_text(self):
         return self._DRIVER.find_element(By.CLASS_NAME, 'new-training__starting').text
     
-    # TO FINISH
-    def get_cypress_tutorial(self):
-        #tutorials_menu = self._DRIVER.find_element(By.XPATH, '//a[@class="navbar__tutorial-menu"]').click()
-        menu_items = self._DRIVER.find_elements(By.TAG_NAME, 'span')
-        for item in menu_items:
-            print(item.text)
-            if 'front' in item.text.lower():
-                front_end_item = item
-                front_end_item.click()
-                
-        # Need to specifiy via parents
-        cypress_button = self._DRIVER.find_elements(By.XPATH, '//a[@href="/cypress-tutorial/"]')
-        cypress_button = cypress_button[1]
-        return cypress_button
-
     def get_postman_tutorial_redirect(self):
         tutorials = self._DRIVER.find_elements(By.CLASS_NAME, 'category__name')
         for tutorial in tutorials:
