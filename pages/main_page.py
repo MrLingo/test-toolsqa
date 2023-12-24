@@ -68,8 +68,8 @@ class MainPage():
         return self._DRIVER.find_element(By.XPATH, '//a[@href="/articles"]')
 
     # Footer
-    def get_find_us_icons(self):
-        return self._DRIVER.find_elements(By.CLASS_NAME, 'profile-type')
-        #for icon in icons:
-        #    if 'facebook' in icon.get_attribute('innerHTML').lower():
-        #        return icon
+    def get_find_us_icon(self, social_media):
+        anchors = self._DRIVER.find_elements(By.XPATH, '//a[@class="page-link-wrapper d-block"]')
+        for social_media_icon in anchors:
+            if social_media in social_media_icon.get_attribute('href').lower():
+                return social_media_icon        

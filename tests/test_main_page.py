@@ -1,3 +1,4 @@
+import time
 from selenium import webdriver
 from pages.main_page import MainPage
 
@@ -90,6 +91,12 @@ class TestMainPage():
         self._main_page.get_scrum_learning_item().click()
         return self
 
+    # Footer
+    def click_social_media_link(self, social_media):
+        self._main_page.get_find_us_icon(social_media).click()
+        time.sleep(3)
+        return self
+
     def __exit__(self):
         self._DRIVER.quit()
 
@@ -121,5 +128,15 @@ for browser in BROWSERS:
     .click_postman_tutorial() \
     .go_back() \
     .click_scrum_category()
+
+    # Footer
+    test_main_page.click_social_media_link('facebook') \
+    .go_back() \
+    .click_social_media_link('twitter') \
+    .go_back() \
+    .click_social_media_link('linkedin') \
+    .go_back() \
+    .click_social_media_link('youtube') \
+    .go_back()
 
     test_main_page.__exit__()
