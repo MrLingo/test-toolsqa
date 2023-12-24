@@ -1,7 +1,14 @@
 {
-	browsers: [
+	"browsers": [
 	    "Firefox",
 		"Edge"
 	],
-    "main_page" : "https://toolsqa.com/"	
+	"pages" : {
+    "main_page" : "https://toolsqa.com/",
+	"agile_scrum_page" : "https://toolsqa.com/agile/agile-scrum-tutorial/",
+	"articles_page" : "https://toolsqa.com/articles",
+	"enroll_page" : "https://toolsqa.com/selenium-training?q=banner#enroll-form",
+	"selenium_training_page" : "https://toolsqa.com/selenium-training?q=headers"
+    },
+	"headless_mode" : true
 }

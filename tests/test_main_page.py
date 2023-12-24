@@ -1,4 +1,6 @@
 import time
+import json
+
 from selenium import webdriver
 from pages.main_page import MainPage
 
@@ -95,10 +97,17 @@ class TestMainPage():
     def __exit__(self):
         self._DRIVER.quit()
 
-    
-MAIN_PAGE_URL = 'https://toolsqa.com/'
-BROWSERS = ['Firefox']
-HEADLESS_MODE = True
+
+# ==========================  Init tests  =====================================
+
+# Read configuration
+config_file = open('config/config.json')
+data = json.load(config_file)
+config_file.close()
+
+MAIN_PAGE_URL = data['pages']['main_page']
+BROWSERS = [browser for browser in data['browsers']]
+HEADLESS_MODE = data['headless_mode']
 
 # Test on all browsers
 for browser in BROWSERS:
