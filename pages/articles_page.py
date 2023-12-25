@@ -10,5 +10,8 @@ class ArticlesPage():
         self._DRIVER.get(URL)
         self._DRIVER.maximize_window()
 
-    def click_articles(self):
+    def get_articles(self):
         return self._DRIVER.find_elements(By.CLASS_NAME, 'article__title')
+    
+    def get_page_index(self, page_index):
+        return self._DRIVER.find_element(By.XPATH, f'//a[@href="/articles/pages/{page_index}"]')

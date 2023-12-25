@@ -1,7 +1,6 @@
 {
 	"browsers": [
-	    "Firefox",
-		"Edge"
+	    "Firefox"
 	],
 	"pages" : {
     "main_page" : "https://toolsqa.com/",
