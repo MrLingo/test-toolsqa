@@ -122,24 +122,24 @@ for browser in BROWSERS:
     curr_window = test_main_page.get_current_window()
     
     test_main_page.click_demo_site_nav_item() \
-    .go_to_original_tab(curr_window) \
-    .click_about_nav_item() \
-    .type_into_search_field('testing input field')
+                  .go_to_original_tab(curr_window) \
+                  .click_about_nav_item() \
+                  .type_into_search_field('testing input field')
                   
     # Body
     test_main_page.get_training_batch_announcment_text() \
-    .click_postman_tutorial() \
-    .go_back() \
-    .click_scrum_category()
+                  .click_postman_tutorial() \
+                  .go_back() \
+                  .click_scrum_category()
 
     # Footer
     test_main_page.click_social_media_link('facebook') \
-    .go_back() \
-    .click_social_media_link('twitter') \
-    .go_back() \
-    .click_social_media_link('linkedin') \
-    .go_back() \
-    .click_social_media_link('youtube') \
-    .go_back()
+                  .go_back() \
+                  .click_social_media_link('twitter') \
+                  .go_back() \
+                  .click_social_media_link('linkedin') \
+                  .go_back() \
+                  .click_social_media_link('youtube') \
+                  .go_back()
     
     test_main_page.__exit__()
