@@ -1,7 +1,7 @@
-from datetime import datetime
 from selenium import webdriver
-from tests.config_reader import data, browsers_config, headless_mode_config
+from utilities.config_reader import data, browsers_config, headless_mode_config
 from pages.selenium_training_page import SeleniumTrainingPage
+from utilities.exception_logger import log_exception
 
 class TestSeleniumTrainingPage():
     _selenium_training_page = None
@@ -72,21 +72,13 @@ HEADLESS_MODE = headless_mode_config
 
 # Test on all browsers
 for browser in BROWSERS:
-    _selenium_training_page = TestSeleniumTrainingPage(browser, MAIN_PAGE_URL, HEADLESS_MODE)
+    selenium_training_page = TestSeleniumTrainingPage(browser, MAIN_PAGE_URL, HEADLESS_MODE)
 
     try:
-        _selenium_training_page.click_faqs() \
+        selenium_training_page.click_faqs() \
                                .extract_enrolled_count() \
                                .extract_what_is_included()
     except Exception as ex:
-        print(ex)
-        date_time_str = datetime.now().strftime("%m-%d-%Y, %H-%M-%S")
-
-        # Log error info
-        with open('results\\report.txt', 'a') as report_file:
-            report_file.write('============ ' + date_time_str + ' ============\n' + str(ex) + "\n\n")
-
-        if not HEADLESS_MODE:            
-            _selenium_training_page.take_screenshot(f"results\{date_time_str}_selenium_training_page.png")
+        log_exception(ex, HEADLESS_MODE, selenium_training_page, 'selenium_training_page')
      
-    _selenium_training_page.__exit__()
+    selenium_training_page.__exit__()

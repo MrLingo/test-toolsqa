@@ -1,7 +1,7 @@
-from datetime import datetime
 from selenium import webdriver
-from tests.config_reader import data, browsers_config, headless_mode_config
+from utilities.config_reader import data, browsers_config, headless_mode_config
 from pages.agile_scrum_tutorial_page import AgileScrumPage
+from utilities.exception_logger import log_exception
 
 class TestAgileScrumPage():
     _agile_scrum_page = None
@@ -73,18 +73,15 @@ HEADLESS_MODE = headless_mode_config
 
 # Test on all browsers
 for browser in BROWSERS:
-    _agile_scrum_page = TestAgileScrumPage(browser, MAIN_PAGE_URL, HEADLESS_MODE)
+    agile_scrum_page = TestAgileScrumPage(browser, MAIN_PAGE_URL, HEADLESS_MODE)
 
     try:
-        _agile_scrum_page.extract_release_date() \
+        agile_scrum_page.extract_release_date() \
                          .extract_author() \
                          .extract_reviewer() \
                          .extract_comment_section() \
                          .click_next_lesson()
     except Exception as ex:
-        print(ex)
-        if not HEADLESS_MODE:
-            date_time_str = datetime.now().strftime("%m-%d-%Y, %H-%M-%S")
-            _agile_scrum_page.take_screenshot(f"results\{date_time_str}_agile_scrum_page.png")
+       log_exception(ex, HEADLESS_MODE, agile_scrum_page, 'agile_scrum_page')
                      
-    _agile_scrum_page.__exit__()
+    agile_scrum_page.__exit__()

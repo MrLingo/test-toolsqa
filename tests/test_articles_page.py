@@ -1,7 +1,7 @@
-from datetime import datetime
 from selenium import webdriver
-from tests.config_reader import data, browsers_config, headless_mode_config
+from utilities.config_reader import data, browsers_config, headless_mode_config
 from pages.articles_page import ArticlesPage
+from utilities.exception_logger import log_exception
 
 class TestArticlesPage():
     _articles_page = None
@@ -80,14 +80,11 @@ HEADLESS_MODE = headless_mode_config
 
 # Test on all browsers
 for browser in BROWSERS:
-    _articles_page = TestArticlesPage(browser, MAIN_PAGE_URL, HEADLESS_MODE)
+    articles_page = TestArticlesPage(browser, MAIN_PAGE_URL, HEADLESS_MODE)
     try:
-        _articles_page.extract_articles(False) \
+        articles_page.extract_articles(False) \
                       .extract_articles(2, True)
     except Exception as ex:
-        print(ex)
-        if not HEADLESS_MODE:
-            date_time_str = datetime.now().strftime("%m-%d-%Y, %H-%M-%S")
-            _articles_page.take_screenshot(f"results\{date_time_str}_articles_page.png")
+        log_exception(ex, HEADLESS_MODE, articles_page, 'articles_page')
 
-    _articles_page.__exit__()
+    articles_page.__exit__()

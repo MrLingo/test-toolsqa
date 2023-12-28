@@ -1,8 +1,8 @@
 import time
-from datetime import datetime
 from selenium import webdriver
-from tests.config_reader import data, browsers_config, headless_mode_config
+from utilities.config_reader import data, browsers_config, headless_mode_config
 from pages.enroll_page import EnrollPage
+from utilities.exception_logger import log_exception
 
 class TestEnrollPage():
     _enroll_page = None
@@ -113,9 +113,6 @@ for browser in BROWSERS:
                         .type_into_message_name_field('Test message') \
                         .type_into_code_name_field('code')
     except Exception as ex:
-        print(ex)
-        if not HEADLESS_MODE:
-            date_time_str = datetime.now().strftime("%m-%d-%Y, %H-%M-%S")
-            test_enroll_page.take_screenshot(f"results\{date_time_str}_enroll_page.png")
+        log_exception(ex, HEADLESS_MODE, test_enroll_page, 'enroll_page')
             
     test_enroll_page.__exit__()

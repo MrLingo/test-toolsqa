@@ -1,8 +1,8 @@
 import time
-from datetime import datetime
 from selenium import webdriver
-from tests.config_reader import data, browsers_config, headless_mode_config
+from utilities.config_reader import data, browsers_config, headless_mode_config
 from pages.main_page import MainPage
+from utilities.exception_logger import log_exception
 
 
 class TestMainPage():
@@ -143,9 +143,6 @@ for browser in BROWSERS:
                     .go_back()
     
     except Exception as ex:
-        print(ex)
-        if not HEADLESS_MODE:
-            date_time_str = datetime.now().strftime("%m-%d-%Y, %H-%M-%S")
-            test_main_page.take_screenshot(f"results\{date_time_str}_main_page.png")
+        log_exception(ex, HEADLESS_MODE, test_main_page, 'main_page')
 
     test_main_page.__exit__()
