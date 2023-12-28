@@ -1,4 +1,5 @@
 import time
+from datetime import datetime
 from selenium import webdriver
 from tests.config_reader import data, browsers_config, headless_mode_config
 from pages.main_page import MainPage
@@ -37,6 +38,9 @@ class TestMainPage():
 
     def close_current_window(self):
         self._DRIVER.close()
+
+    def take_screenshot(self, dir):
+        self._DRIVER.get_screenshot_as_file(dir)
 
     # Header
     def click_logo_img(self):
@@ -110,31 +114,38 @@ for browser in BROWSERS:
 
     # Chain by section
     # Header
-    test_main_page.click_logo_img() \
-                  .click_home_nav_item() \
-                  .click_selenium_train_nav_item()
-     
-    curr_window = test_main_page.get_current_window()
-    
-    test_main_page.click_demo_site_nav_item() \
-                  .go_to_original_tab(curr_window) \
-                  .click_about_nav_item() \
-                  .type_into_search_field('testing input field')
-                  
-    # Body
-    test_main_page.get_training_batch_announcment_text() \
-                  .click_postman_tutorial() \
-                  .go_back() \
-                  .click_scrum_category()
+    try:
+        test_main_page.click_logo_img() \
+                    .click_home_nav_item() \
+                    .click_selenium_train_nav_item()
+        
+        curr_window = test_main_page.get_current_window()
+        
+        test_main_page.click_demo_site_nav_item() \
+                    .go_to_original_tab(curr_window) \
+                    .click_about_nav_item() \
+                    .type_into_search_field('testing input field')
+                    
+        # Body
+        test_main_page.get_training_batch_announcment_text() \
+                    .click_postman_tutorial() \
+                    .go_back() \
+                    .click_scrum_category()
 
-    # Footer
-    test_main_page.click_social_media_link('facebook') \
-                  .go_back() \
-                  .click_social_media_link('twitter') \
-                  .go_back() \
-                  .click_social_media_link('linkedin') \
-                  .go_back() \
-                  .click_social_media_link('youtube') \
-                  .go_back()
+        # Footer
+        test_main_page.click_social_media_link('facebook') \
+                    .go_back() \
+                    .click_social_media_link('twitter') \
+                    .go_back() \
+                    .click_social_media_link('linkedin') \
+                    .go_back() \
+                    .click_social_media_link('youtube') \
+                    .go_back()
     
+    except Exception as ex:
+        print(ex)
+        if not HEADLESS_MODE:
+            date_time_str = datetime.now().strftime("%m-%d-%Y, %H-%M-%S")
+            test_main_page.take_screenshot(f"results\{date_time_str}_main_page.png")
+
     test_main_page.__exit__()

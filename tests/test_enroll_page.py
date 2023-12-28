@@ -1,4 +1,5 @@
 import time
+from datetime import datetime
 from selenium import webdriver
 from tests.config_reader import data, browsers_config, headless_mode_config
 from pages.enroll_page import EnrollPage
@@ -37,7 +38,9 @@ class TestEnrollPage():
     def close_current_window(self):
         self._DRIVER.close()
 
-    
+    def take_screenshot(self, dir):
+        self._DRIVER.get_screenshot_as_file(dir)
+
     # Form
     def type_into_first_name_field(self, text):
         self._enroll_page.get_first_name_field().clear()
@@ -100,13 +103,19 @@ for browser in BROWSERS:
     test_enroll_page = TestEnrollPage(browser, MAIN_PAGE_URL, HEADLESS_MODE)
 
     # Fill forms fields
-    test_enroll_page.type_into_first_name_field('John') \
-                    .type_into_last_name_field('Hale') \
-                    .type_into_email_name_field('j.haile@gmail.com') \
-                    .type_into_mobile_name_field('0885666111') \
-                    .type_into_country_name_field('Bulgaria') \
-                    .type_into_city_name_field('Sofia') \
-                    .type_into_message_name_field('Test message') \
-                    .type_into_code_name_field('code')
-    
+    try:
+        test_enroll_page.type_into_first_name_field('John') \
+                        .type_into_last_name_field('Hale') \
+                        .type_into_email_name_field('j.haile@gmail.com') \
+                        .type_into_mobile_name_field('0885666111') \
+                        .type_into_country_name_field('Bulgaria') \
+                        .type_into_city_name_field('Sofia') \
+                        .type_into_message_name_field('Test message') \
+                        .type_into_code_name_field('code')
+    except Exception as ex:
+        print(ex)
+        if not HEADLESS_MODE:
+            date_time_str = datetime.now().strftime("%m-%d-%Y, %H-%M-%S")
+            test_enroll_page.take_screenshot(f"results\{date_time_str}_enroll_page.png")
+            
     test_enroll_page.__exit__()

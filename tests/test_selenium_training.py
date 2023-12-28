@@ -1,3 +1,4 @@
+from datetime import datetime
 from selenium import webdriver
 from tests.config_reader import data, browsers_config, headless_mode_config
 from pages.selenium_training_page import SeleniumTrainingPage
@@ -35,7 +36,9 @@ class TestSeleniumTrainingPage():
 
     def close_current_window(self):
         self._DRIVER.close()
-    
+
+    def take_screenshot(self, dir):
+        self._DRIVER.get_screenshot_as_file(dir)
 
     # Extract
     def extract_enrolled_count(self):
@@ -69,9 +72,21 @@ HEADLESS_MODE = headless_mode_config
 
 # Test on all browsers
 for browser in BROWSERS:
-    _selenium_training_page = TestSeleniumTrainingPage(browser, MAIN_PAGE_URL, HEADLESS_MODE) \
-                              .click_faqs() \
-                              .extract_enrolled_count() \
-                              .extract_what_is_included()
+    _selenium_training_page = TestSeleniumTrainingPage(browser, MAIN_PAGE_URL, HEADLESS_MODE)
+
+    try:
+        _selenium_training_page.click_faqs() \
+                               .extract_enrolled_count() \
+                               .extract_what_is_included()
+    except Exception as ex:
+        print(ex)
+        date_time_str = datetime.now().strftime("%m-%d-%Y, %H-%M-%S")
+
+        # Log error info
+        with open('results\\report.txt', 'a') as report_file:
+            report_file.write('============ ' + date_time_str + ' ============\n' + str(ex) + "\n\n")
+
+        if not HEADLESS_MODE:            
+            _selenium_training_page.take_screenshot(f"results\{date_time_str}_selenium_training_page.png")
      
     _selenium_training_page.__exit__()

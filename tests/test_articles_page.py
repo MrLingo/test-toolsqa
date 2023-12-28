@@ -1,3 +1,4 @@
+from datetime import datetime
 from selenium import webdriver
 from tests.config_reader import data, browsers_config, headless_mode_config
 from pages.articles_page import ArticlesPage
@@ -40,6 +41,9 @@ class TestArticlesPage():
         self._articles_page.get_page_index(page_index).click()
         return self
 
+    def take_screenshot(self, dir):
+        self._DRIVER.get_screenshot_as_file(dir)
+
     # Articles
     def extract_articles(self, pages=1, click_items=False):
         articles = self._articles_page.get_articles()
@@ -77,8 +81,13 @@ HEADLESS_MODE = headless_mode_config
 # Test on all browsers
 for browser in BROWSERS:
     _articles_page = TestArticlesPage(browser, MAIN_PAGE_URL, HEADLESS_MODE)
-    
-    _articles_page.extract_articles(False) \
-                  .extract_articles(2, True)
+    try:
+        _articles_page.extract_articles(False) \
+                      .extract_articles(2, True)
+    except Exception as ex:
+        print(ex)
+        if not HEADLESS_MODE:
+            date_time_str = datetime.now().strftime("%m-%d-%Y, %H-%M-%S")
+            _articles_page.take_screenshot(f"results\{date_time_str}_articles_page.png")
 
     _articles_page.__exit__()

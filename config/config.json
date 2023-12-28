@@ -9,5 +9,5 @@
 	"enroll_page" : "https://toolsqa.com/selenium-training?q=banner#enroll-form",
 	"selenium_training_page" : "https://toolsqa.com/selenium-training?q=headers"
     },
-	"headless_mode" : true
+	"headless_mode" : false
 }

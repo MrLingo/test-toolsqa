@@ -1,3 +1,4 @@
+from datetime import datetime
 from selenium import webdriver
 from tests.config_reader import data, browsers_config, headless_mode_config
 from pages.agile_scrum_tutorial_page import AgileScrumPage
@@ -35,7 +36,10 @@ class TestAgileScrumPage():
 
     def close_current_window(self):
         self._DRIVER.close()
-    
+
+    def take_screenshot(self, dir):
+        self._DRIVER.get_screenshot_as_file(dir)
+
     # Tutorial header
     def extract_author(self):
         print('Tutorial author: ', self._agile_scrum_page.get_author().text)
@@ -71,10 +75,16 @@ HEADLESS_MODE = headless_mode_config
 for browser in BROWSERS:
     _agile_scrum_page = TestAgileScrumPage(browser, MAIN_PAGE_URL, HEADLESS_MODE)
 
-    _agile_scrum_page.extract_release_date() \
-                     .extract_author() \
-                     .extract_reviewer() \
-                     .extract_comment_section() \
-                     .click_next_lesson()
-        
+    try:
+        _agile_scrum_page.extract_release_date() \
+                         .extract_author() \
+                         .extract_reviewer() \
+                         .extract_comment_section() \
+                         .click_next_lesson()
+    except Exception as ex:
+        print(ex)
+        if not HEADLESS_MODE:
+            date_time_str = datetime.now().strftime("%m-%d-%Y, %H-%M-%S")
+            _agile_scrum_page.take_screenshot(f"results\{date_time_str}_agile_scrum_page.png")
+                     
     _agile_scrum_page.__exit__()
