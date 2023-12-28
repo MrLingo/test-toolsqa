@@ -2,9 +2,9 @@ import time
 import json
 
 from selenium import webdriver
-from pages.articles_page import ArticlesPage
+from pages.agile_scrum_tutorial_page import AgileScrumPage
 
-class TestArticlesPage():
+class TestAgileScrumPage():
     _articles_page = None
     _DRIVER = None
     _OPTIONS = None
@@ -17,7 +17,7 @@ class TestArticlesPage():
             self._OPTIONS = webdriver.EdgeOptions().add_argument('--headless=new') if headless_mode else None
             self._DRIVER = webdriver.Edge(options=self._OPTIONS)
 
-        self._articles_page = ArticlesPage(self._DRIVER, URL)
+        self._articles_page = AgileScrumPage(self._DRIVER, URL)
 
     # Other
     def go_to_original_tab(self, curr_window_handle):        
@@ -38,34 +38,27 @@ class TestArticlesPage():
     def close_current_window(self):
         self._DRIVER.close()
     
-    def click_page(self, page_index):
-        self._articles_page.get_page_index(page_index).click()
-        return self
-
-    # Articles
-    def extract_articles(self, pages=1, click_items=False):
-        articles = self._articles_page.get_articles()
-        for page in range(pages):
-            for index, article in enumerate(articles):
-                if not click_items:
-                    print('Article title extracted', articles[index].text)
-                else:                    
-                    # Catch stale element
-                    try:
-                        print('Article clicked ', articles[index].text)                        
-                        articles[index].click()
-                        self.go_back()
-                    except:                        
-                        articles[index] = self._articles_page.get_articles()[index]
-                        print('Article clicked', articles[index].text)
-                        articles[index].click()
-                        self.go_back()
-
-            print(str(pages) + " ==== ", page)
-            if page+1 >= 1:
-                self.click_page(page+2)
+    # Tutorial header
+    def extract_author(self):
+        print('Tutorial author: ', self._articles_page.get_author().text)
         return self
     
+    def extract_reviewer(self):
+        print('Tutorial reviewer: ', self._articles_page.get_reviewer().text)
+        return self
+    
+    def extract_release_date(self):
+        print('Tutorial relase date: ', self._articles_page.get_tutorial_release_date().text)
+        return self
+    
+    # Tutorial footer
+    def extract_comment_section(self):
+        return self
+    
+    def click_next_lesson(self):
+        self._articles_page.get_next_lesson().click()
+        return self
+
     def __exit__(self):
         self._DRIVER.quit()
 
@@ -77,15 +70,18 @@ config_file = open('config/config.json')
 data = json.load(config_file)
 config_file.close()
 
-MAIN_PAGE_URL = data['pages']['articles_page']
+MAIN_PAGE_URL = data['pages']['agile_scrum_page']
 BROWSERS = [browser for browser in data['browsers']]
 HEADLESS_MODE = data['headless_mode']
 
 # Test on all browsers
 for browser in BROWSERS:
-    _articles_page = TestArticlesPage(browser, MAIN_PAGE_URL, HEADLESS_MODE)
-    
-    _articles_page.extract_articles(False) \
-                  .extract_articles(2, True)
+    _agile_scrum_page = TestAgileScrumPage(browser, MAIN_PAGE_URL, HEADLESS_MODE)
 
-    _articles_page.__exit__()
+    _agile_scrum_page.extract_release_date() \
+                     .extract_author() \
+                     .extract_reviewer() \
+                     .extract_comment_section() \
+                     .click_next_lesson()
+        
+    _agile_scrum_page.__exit__()
