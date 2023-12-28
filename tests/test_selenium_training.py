@@ -1,7 +1,5 @@
-import time
-import json
-
 from selenium import webdriver
+from tests.config_reader import data, browsers_config, headless_mode_config
 from pages.selenium_training_page import SeleniumTrainingPage
 
 class TestSeleniumTrainingPage():
@@ -53,9 +51,9 @@ class TestSeleniumTrainingPage():
 
     def extract_what_is_included(self):
         count, type = self._selenium_training_page.get_what_is_included_info()
-        
+
         for count_item, type_item in zip(count, type):
-            print(type_item.text, ' : ', count_item.text)
+            print(type_item.text, ': ', count_item.text)
         return self
 
 
@@ -65,14 +63,9 @@ class TestSeleniumTrainingPage():
 
 # ==========================  Init tests  =====================================
 
-# Read configuration
-config_file = open('config/config.json')
-data = json.load(config_file)
-config_file.close()
-
 MAIN_PAGE_URL = data['pages']['selenium_training_page']
-BROWSERS = [browser for browser in data['browsers']]
-HEADLESS_MODE = data['headless_mode']
+BROWSERS = browsers_config
+HEADLESS_MODE = headless_mode_config
 
 # Test on all browsers
 for browser in BROWSERS:

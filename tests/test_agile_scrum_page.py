@@ -1,11 +1,9 @@
-import time
-import json
-
 from selenium import webdriver
+from tests.config_reader import data, browsers_config, headless_mode_config
 from pages.agile_scrum_tutorial_page import AgileScrumPage
 
 class TestAgileScrumPage():
-    _articles_page = None
+    _agile_scrum_page = None
     _DRIVER = None
     _OPTIONS = None
 
@@ -17,7 +15,7 @@ class TestAgileScrumPage():
             self._OPTIONS = webdriver.EdgeOptions().add_argument('--headless=new') if headless_mode else None
             self._DRIVER = webdriver.Edge(options=self._OPTIONS)
 
-        self._articles_page = AgileScrumPage(self._DRIVER, URL)
+        self._agile_scrum_page = AgileScrumPage(self._DRIVER, URL)
 
     # Other
     def go_to_original_tab(self, curr_window_handle):        
@@ -40,15 +38,15 @@ class TestAgileScrumPage():
     
     # Tutorial header
     def extract_author(self):
-        print('Tutorial author: ', self._articles_page.get_author().text)
+        print('Tutorial author: ', self._agile_scrum_page.get_author().text)
         return self
     
     def extract_reviewer(self):
-        print('Tutorial reviewer: ', self._articles_page.get_reviewer().text)
+        print('Tutorial reviewer: ', self._agile_scrum_page.get_reviewer().text)
         return self
     
     def extract_release_date(self):
-        print('Tutorial relase date: ', self._articles_page.get_tutorial_release_date().text)
+        print('Tutorial relase date: ', self._agile_scrum_page.get_tutorial_release_date().text)
         return self
     
     # Tutorial footer
@@ -56,7 +54,7 @@ class TestAgileScrumPage():
         return self
     
     def click_next_lesson(self):
-        self._articles_page.get_next_lesson().click()
+        self._agile_scrum_page.get_next_lesson().click()
         return self
 
     def __exit__(self):
@@ -65,14 +63,9 @@ class TestAgileScrumPage():
 
 # ==========================  Init tests  =====================================
 
-# Read configuration
-config_file = open('config/config.json')
-data = json.load(config_file)
-config_file.close()
-
 MAIN_PAGE_URL = data['pages']['agile_scrum_page']
-BROWSERS = [browser for browser in data['browsers']]
-HEADLESS_MODE = data['headless_mode']
+BROWSERS = browsers_config
+HEADLESS_MODE = headless_mode_config
 
 # Test on all browsers
 for browser in BROWSERS:

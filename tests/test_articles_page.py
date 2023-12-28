@@ -1,7 +1,5 @@
-import time
-import json
-
 from selenium import webdriver
+from tests.config_reader import data, browsers_config, headless_mode_config
 from pages.articles_page import ArticlesPage
 
 class TestArticlesPage():
@@ -72,14 +70,9 @@ class TestArticlesPage():
 
 # ==========================  Init tests  =====================================
 
-# Read configuration
-config_file = open('config/config.json')
-data = json.load(config_file)
-config_file.close()
-
 MAIN_PAGE_URL = data['pages']['articles_page']
-BROWSERS = [browser for browser in data['browsers']]
-HEADLESS_MODE = data['headless_mode']
+BROWSERS = browsers_config
+HEADLESS_MODE = headless_mode_config
 
 # Test on all browsers
 for browser in BROWSERS:
