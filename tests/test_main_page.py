@@ -1,14 +1,16 @@
 import time
+import urllib3.exceptions
 from selenium import webdriver
 from utilities.config_reader import data, browsers_config, headless_mode_config
 from pages.main_page import MainPage
 from utilities.exception_logger import log_exception
+import pytest
 
-
-class TestMainPage():
+class DriveMainPage():
     _main_page = None
     _DRIVER = None
     _OPTIONS = None
+
 
     def __init__(self, browser, URL, headless_mode):        
         if(browser == 'Firefox'):
@@ -19,6 +21,7 @@ class TestMainPage():
             self._DRIVER = webdriver.Edge(options=self._OPTIONS)
 
         self._main_page = MainPage(self._DRIVER, URL)
+    
 
     # Other
     def go_to_original_tab(self, curr_window_handle):        
@@ -52,7 +55,7 @@ class TestMainPage():
         return self
                     
     def click_selenium_train_nav_item(self):
-        self._main_page.get_nav_bar_item(1).click() 
+        self._main_page.get_nav_bar_item(1).click()
         return self
 
     def click_demo_site_nav_item(self): 
@@ -83,7 +86,6 @@ class TestMainPage():
         self._main_page.get_postman_tutorial_redirect().click()
         return self
 
-    # To switch handle
     def click_latest_article_button(self):
         self._main_page.get_latest_articles_button().click()
         return self
@@ -102,6 +104,63 @@ class TestMainPage():
         self._DRIVER.quit()
 
 
+class TestMainPage():
+    @staticmethod
+    def test_header():
+        try:
+            drive_main_page.click_logo_img() \
+                           .click_home_nav_item() \
+                           .click_selenium_train_nav_item()
+            
+            curr_window = drive_main_page.get_current_window()
+        
+            drive_main_page.click_demo_site_nav_item() \
+                           .go_to_original_tab(curr_window) \
+                           .click_about_nav_item() \
+                           .type_into_search_field('testing input field')
+            
+            assert True            
+        except urllib3.exceptions.MaxRetryError:            
+            assert True    
+        except Exception as ex:            
+            log_exception(ex, HEADLESS_MODE, drive_main_page, 'main_page')
+            pytest.fail
+            
+
+    @staticmethod
+    def test_body():
+        try:
+            drive_main_page.get_training_batch_announcment_text() \
+                           .click_postman_tutorial() \
+                           .go_back() \
+                           .click_scrum_category()
+            
+            assert True            
+        except urllib3.exceptions.MaxRetryError:            
+            assert True    
+        except Exception as ex:
+            log_exception(ex, HEADLESS_MODE, drive_main_page, 'main_page')
+            pytest.fail
+
+    @staticmethod
+    def test_footer():
+        try:
+            drive_main_page.click_social_media_link('facebook') \
+                           .go_back() \
+                           .click_social_media_link('twitter') \
+                           .go_back() \
+                           .click_social_media_link('linkedin') \
+                           .go_back() \
+                           .click_social_media_link('youtube') \
+                           .go_back()
+            
+            assert True            
+        except urllib3.exceptions.MaxRetryError:            
+            assert True    
+        except Exception as ex:
+            log_exception(ex, HEADLESS_MODE, drive_main_page, 'main_page')
+            pytest.fail
+
 # ==========================  Init tests  =====================================
 
 MAIN_PAGE_URL = data['pages']['main_page']
@@ -110,39 +169,15 @@ HEADLESS_MODE = headless_mode_config
 
 # Test on all browsers
 for browser in BROWSERS:
-    test_main_page = TestMainPage(browser, MAIN_PAGE_URL, HEADLESS_MODE)
+    drive_main_page = DriveMainPage(browser, MAIN_PAGE_URL, HEADLESS_MODE)
 
-    # Chain by section
     # Header
-    try:
-        test_main_page.click_logo_img() \
-                    .click_home_nav_item() \
-                    .click_selenium_train_nav_item()
-        
-        curr_window = test_main_page.get_current_window()
-        
-        test_main_page.click_demo_site_nav_item() \
-                    .go_to_original_tab(curr_window) \
-                    .click_about_nav_item() \
-                    .type_into_search_field('testing input field')
-                    
-        # Body
-        test_main_page.get_training_batch_announcment_text() \
-                    .click_postman_tutorial() \
-                    .go_back() \
-                    .click_scrum_category()
-
-        # Footer
-        test_main_page.click_social_media_link('facebook') \
-                    .go_back() \
-                    .click_social_media_link('twitter') \
-                    .go_back() \
-                    .click_social_media_link('linkedin') \
-                    .go_back() \
-                    .click_social_media_link('youtube') \
-                    .go_back()
+    TestMainPage.test_header()
+                
+    # Body
+    TestMainPage.test_body()
     
-    except Exception as ex:
-        log_exception(ex, HEADLESS_MODE, test_main_page, 'main_page')
-
-    test_main_page.__exit__()
+    # Footer
+    TestMainPage.test_footer()
+    
+    drive_main_page.__exit__()

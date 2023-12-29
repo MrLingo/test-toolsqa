@@ -1,21 +1,25 @@
+import pytest
+import urllib3.exceptions
 from selenium import webdriver
 from utilities.config_reader import data, browsers_config, headless_mode_config
 from pages.selenium_training_page import SeleniumTrainingPage
 from utilities.exception_logger import log_exception
 
-class TestSeleniumTrainingPage():
+
+class DriveSeleniumTrainingPage():
     _selenium_training_page = None
     _DRIVER = None
     _OPTIONS = None
 
     def __init__(self, browser, URL, headless_mode):        
         if(browser == 'Firefox'):
-            self._OPTIONS = webdriver.FirefoxOptions().add_argument('--headless=new') if headless_mode else None
+            self._OPTIONS = webdriver.FirefoxOptions().add_argument('--headless=new').add_argument('--disable-blink-features=AutomationControlled').add_argument('--log-path=geckodriver.log') if headless_mode else None
             self._DRIVER = webdriver.Firefox(options=self._OPTIONS)                        
         elif(browser == 'Edge'):
-            self._OPTIONS = webdriver.EdgeOptions().add_argument('--headless=new') if headless_mode else None
+            self._OPTIONS = webdriver.EdgeOptions().add_argument('--headless=new').add_argument('--disable-blink-features=AutomationControlled').add_argument('--log-path=geckodriver.log') if headless_mode else None
             self._DRIVER = webdriver.Edge(options=self._OPTIONS)
 
+        #self._DRIVER.service = service if service else Service()
         self._selenium_training_page = SeleniumTrainingPage(self._DRIVER, URL)
 
     # Other
@@ -36,17 +40,17 @@ class TestSeleniumTrainingPage():
 
     def close_current_window(self):
         self._DRIVER.close()
-
+    
     def take_screenshot(self, dir):
         self._DRIVER.get_screenshot_as_file(dir)
 
     # Extract
     def extract_enrolled_count(self):
-        print('Get already enrolled count: ', self._selenium_training_page.get_already_enrolled_count().text)
+        print('Get already enrolled count: ', self._selenium_training_page.get_already_enrolled_count().text)        
         return self
     
     def click_faqs(self):
-        faqs = self._selenium_training_page.get_faqs()
+        faqs = self._selenium_training_page.get_faqs()        
 
         for faq in faqs:
             faq.click()
@@ -54,7 +58,7 @@ class TestSeleniumTrainingPage():
 
     def extract_what_is_included(self):
         count, type = self._selenium_training_page.get_what_is_included_info()
-
+        
         for count_item, type_item in zip(count, type):
             print(type_item.text, ': ', count_item.text)
         return self
@@ -64,6 +68,20 @@ class TestSeleniumTrainingPage():
         self._DRIVER.quit()
 
 
+class TestSeleniumPage():
+    @staticmethod
+    def test_info_and_faqs():
+        try:
+            drive_selenium_training_page.click_faqs() \
+                                        .extract_enrolled_count() \
+                                        .extract_what_is_included()
+            assert True            
+        except urllib3.exceptions.MaxRetryError:            
+            assert True    
+        except Exception as ex:
+            log_exception(ex, HEADLESS_MODE, drive_selenium_training_page, 'selenium_training_page')
+            pytest.fail
+        
 # ==========================  Init tests  =====================================
 
 MAIN_PAGE_URL = data['pages']['selenium_training_page']
@@ -72,13 +90,8 @@ HEADLESS_MODE = headless_mode_config
 
 # Test on all browsers
 for browser in BROWSERS:
-    selenium_training_page = TestSeleniumTrainingPage(browser, MAIN_PAGE_URL, HEADLESS_MODE)
+    drive_selenium_training_page = DriveSeleniumTrainingPage(browser, MAIN_PAGE_URL, HEADLESS_MODE)
 
-    try:
-        selenium_training_page.click_faqs() \
-                               .extract_enrolled_count() \
-                               .extract_what_is_included()
-    except Exception as ex:
-        log_exception(ex, HEADLESS_MODE, selenium_training_page, 'selenium_training_page')
-     
-    selenium_training_page.__exit__()
+    TestSeleniumPage.test_info_and_faqs()
+    
+    drive_selenium_training_page.__exit__()

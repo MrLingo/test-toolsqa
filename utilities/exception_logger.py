@@ -8,5 +8,5 @@ def log_exception(ex, headless_mode, page, page_name):
     with open('results\\report.txt', 'a') as report_file:
         report_file.write('============ ' + date_time_str + ' ============\n' + str(ex) + "\n\n")
 
-    if not headless_mode:        
+    if not headless_mode:
         page.take_screenshot(f"results\{date_time_str}_{page_name}.png")

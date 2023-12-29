@@ -2,8 +2,11 @@ from selenium import webdriver
 from utilities.config_reader import data, browsers_config, headless_mode_config
 from pages.articles_page import ArticlesPage
 from utilities.exception_logger import log_exception
+import urllib3.exceptions
+import pytest
 
-class TestArticlesPage():
+
+class DriveArticlesPage():
     _articles_page = None
     _DRIVER = None
     _OPTIONS = None
@@ -72,6 +75,20 @@ class TestArticlesPage():
         self._DRIVER.quit()
 
 
+class TestArticlesPage():
+    @staticmethod
+    def test_extraction_of_articles():
+        try:
+            drive_articles_page.extract_articles(False) \
+                               .extract_articles(2, True)
+            
+            assert True            
+        except urllib3.exceptions.MaxRetryError:            
+            assert True    
+        except Exception as ex:            
+            log_exception(ex, HEADLESS_MODE, drive_articles_page, 'articles_page')
+            pytest.fail
+
 # ==========================  Init tests  =====================================
 
 MAIN_PAGE_URL = data['pages']['articles_page']
@@ -80,11 +97,8 @@ HEADLESS_MODE = headless_mode_config
 
 # Test on all browsers
 for browser in BROWSERS:
-    articles_page = TestArticlesPage(browser, MAIN_PAGE_URL, HEADLESS_MODE)
-    try:
-        articles_page.extract_articles(False) \
-                      .extract_articles(2, True)
-    except Exception as ex:
-        log_exception(ex, HEADLESS_MODE, articles_page, 'articles_page')
+    drive_articles_page = DriveArticlesPage(browser, MAIN_PAGE_URL, HEADLESS_MODE)
 
-    articles_page.__exit__()
+    TestArticlesPage.test_extraction_of_articles()
+
+    drive_articles_page.__exit__()

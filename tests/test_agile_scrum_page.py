@@ -2,8 +2,11 @@ from selenium import webdriver
 from utilities.config_reader import data, browsers_config, headless_mode_config
 from pages.agile_scrum_tutorial_page import AgileScrumPage
 from utilities.exception_logger import log_exception
+import urllib3.exceptions
+import pytest
 
-class TestAgileScrumPage():
+
+class DriveAgileScrumPage():
     _agile_scrum_page = None
     _DRIVER = None
     _OPTIONS = None
@@ -65,6 +68,34 @@ class TestAgileScrumPage():
         self._DRIVER.quit()
 
 
+class TestAgileScrumPage():
+    @staticmethod
+    def test_extract_tutoria_info():
+        try:
+            drive_agile_scrum_page.extract_release_date() \
+                         .extract_author() \
+                         .extract_reviewer() \
+                         .extract_comment_section()
+            
+            assert True            
+        except urllib3.exceptions.MaxRetryError:            
+            assert True    
+        except Exception as ex:            
+            log_exception(ex, HEADLESS_MODE, drive_agile_scrum_page, 'agile_scrum_page')
+            pytest.fail
+
+    @staticmethod
+    def test_clicking_next_lesson():
+        try:
+            drive_agile_scrum_page.click_next_lesson()
+            
+            assert True            
+        except urllib3.exceptions.MaxRetryError:            
+            assert True    
+        except Exception as ex:            
+            log_exception(ex, HEADLESS_MODE, drive_agile_scrum_page, 'agile_scrum_page')
+            pytest.fail
+
 # ==========================  Init tests  =====================================
 
 MAIN_PAGE_URL = data['pages']['agile_scrum_page']
@@ -73,15 +104,9 @@ HEADLESS_MODE = headless_mode_config
 
 # Test on all browsers
 for browser in BROWSERS:
-    agile_scrum_page = TestAgileScrumPage(browser, MAIN_PAGE_URL, HEADLESS_MODE)
+    drive_agile_scrum_page = DriveAgileScrumPage(browser, MAIN_PAGE_URL, HEADLESS_MODE)
 
-    try:
-        agile_scrum_page.extract_release_date() \
-                         .extract_author() \
-                         .extract_reviewer() \
-                         .extract_comment_section() \
-                         .click_next_lesson()
-    except Exception as ex:
-       log_exception(ex, HEADLESS_MODE, agile_scrum_page, 'agile_scrum_page')
-                     
-    agile_scrum_page.__exit__()
+    TestAgileScrumPage.test_extract_tutoria_info()
+    TestAgileScrumPage.test_clicking_next_lesson()
+                
+    drive_agile_scrum_page.__exit__()

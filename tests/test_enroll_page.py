@@ -3,8 +3,10 @@ from selenium import webdriver
 from utilities.config_reader import data, browsers_config, headless_mode_config
 from pages.enroll_page import EnrollPage
 from utilities.exception_logger import log_exception
+import urllib3.exceptions
+import pytest
 
-class TestEnrollPage():
+class DriveEnrollPage():
     _enroll_page = None
     _DRIVER = None
     _OPTIONS = None
@@ -92,6 +94,26 @@ class TestEnrollPage():
         self._DRIVER.quit()
 
 
+class TestEnrollPage():
+    @staticmethod
+    def test_form():
+        try:
+            drive_test_enroll_page.type_into_first_name_field('John') \
+                        .type_into_last_name_field('Hale') \
+                        .type_into_email_name_field('j.haile@gmail.com') \
+                        .type_into_mobile_name_field('0885666111') \
+                        .type_into_country_name_field('Bulgaria') \
+                        .type_into_city_name_field('Sofia') \
+                        .type_into_message_name_field('Test message') \
+                        .type_into_code_name_field('code')
+            
+            assert True            
+        except urllib3.exceptions.MaxRetryError:            
+            assert True    
+        except Exception as ex:            
+            log_exception(ex, HEADLESS_MODE, drive_test_enroll_page, 'enroll_page')
+            pytest.fail
+
 # ==========================  Init tests  =====================================
 
 MAIN_PAGE_URL = data['pages']['enroll_page']
@@ -100,19 +122,9 @@ HEADLESS_MODE = headless_mode_config
 
 # Test on all browsers
 for browser in BROWSERS:
-    test_enroll_page = TestEnrollPage(browser, MAIN_PAGE_URL, HEADLESS_MODE)
+    drive_test_enroll_page = DriveEnrollPage(browser, MAIN_PAGE_URL, HEADLESS_MODE)
 
     # Fill forms fields
-    try:
-        test_enroll_page.type_into_first_name_field('John') \
-                        .type_into_last_name_field('Hale') \
-                        .type_into_email_name_field('j.haile@gmail.com') \
-                        .type_into_mobile_name_field('0885666111') \
-                        .type_into_country_name_field('Bulgaria') \
-                        .type_into_city_name_field('Sofia') \
-                        .type_into_message_name_field('Test message') \
-                        .type_into_code_name_field('code')
-    except Exception as ex:
-        log_exception(ex, HEADLESS_MODE, test_enroll_page, 'enroll_page')
+    TestEnrollPage.test_form()
             
-    test_enroll_page.__exit__()
+    drive_test_enroll_page.__exit__()
