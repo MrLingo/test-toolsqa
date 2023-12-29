@@ -1,10 +1,11 @@
 import time
+import urllib3.exceptions
+import pytest
 from selenium import webdriver
 from utilities.config_reader import data, browsers_config, headless_mode_config
 from pages.enroll_page import EnrollPage
 from utilities.exception_logger import log_exception
-import urllib3.exceptions
-import pytest
+
 
 class DriveEnrollPage():
     _enroll_page : EnrollPage = None

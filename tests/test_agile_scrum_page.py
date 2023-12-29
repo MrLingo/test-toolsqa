@@ -1,49 +1,22 @@
-from selenium import webdriver
+import urllib3.exceptions
+import pytest
+from utilities.driver_handler import DriverHandler
 from utilities.config_reader import data, browsers_config, headless_mode_config
 from pages.agile_scrum_tutorial_page import AgileScrumPage
 from utilities.exception_logger import log_exception
-import urllib3.exceptions
-import pytest
 
 
 class DriveAgileScrumPage():
     _agile_scrum_page : AgileScrumPage = None
     _DRIVER = None
-    _OPTIONS = None
+    
 
-    def __init__(self, browser, URL, headless_mode):        
-        if(browser == 'Firefox'):
-            self._OPTIONS = webdriver.FirefoxOptions().add_argument('--headless=new') if headless_mode else None
-            firefox_service = webdriver.FirefoxService(log_output='geckodriver.log')
-
-            self._DRIVER = webdriver.Firefox(options=self._OPTIONS, service=firefox_service)
-        elif(browser == 'Edge'):
-            self._OPTIONS = webdriver.EdgeOptions().add_argument('--headless=new') if headless_mode else None
-            edge_service = webdriver.FirefoxService(log_output='geckodriver.log')
-
-            self._DRIVER = webdriver.Edge(options=self._OPTIONS, service=edge_service)
-
+    def __init__(self, driver, URL):
+        self._DRIVER = driver
         self._agile_scrum_page = AgileScrumPage(self._DRIVER, URL)
+        
 
     # Other
-    def go_to_original_tab(self, curr_window_handle):        
-        handles = self._DRIVER.window_handles
-
-        for window in handles:
-            if window != curr_window_handle:
-                self._DRIVER.switch_to.window(curr_window_handle)
-                return self
-            
-    def go_back(self):
-        self._DRIVER.back()
-        return self
-
-    def get_current_window(self):
-        return self._DRIVER.current_window_handle
-
-    def close_current_window(self):
-        self._DRIVER.close()
-
     def take_screenshot(self, dir):
         self._DRIVER.get_screenshot_as_file(dir)
 
@@ -77,9 +50,9 @@ class TestAgileScrumPage():
     def test_extract_tutoria_info():
         try:
             drive_agile_scrum_page.extract_release_date() \
-                         .extract_author() \
-                         .extract_reviewer() \
-                         .extract_comment_section()
+                                  .extract_author() \
+                                  .extract_reviewer() \
+                                  .extract_comment_section()
             
             assert True            
         except urllib3.exceptions.MaxRetryError:            
@@ -102,13 +75,14 @@ class TestAgileScrumPage():
 
 # ==========================  Init tests  =====================================
 
-MAIN_PAGE_URL = data['pages']['agile_scrum_page']
+AGILE_SCRUM_PAGE_URL = data['pages']['agile_scrum_page']
 BROWSERS = browsers_config
 HEADLESS_MODE = headless_mode_config
 
 # Test on all browsers
 for browser in BROWSERS:
-    drive_agile_scrum_page = DriveAgileScrumPage(browser, MAIN_PAGE_URL, HEADLESS_MODE)
+    DriverHandler.init_driver(browser, HEADLESS_MODE)
+    drive_agile_scrum_page = DriveAgileScrumPage(DriverHandler.get_driver(), AGILE_SCRUM_PAGE_URL)
 
     TestAgileScrumPage.test_extract_tutoria_info()
     TestAgileScrumPage.test_clicking_next_lesson()

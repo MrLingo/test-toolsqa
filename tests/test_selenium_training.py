@@ -1,7 +1,7 @@
 import pytest
 import urllib3.exceptions
-from selenium import webdriver
 from utilities.config_reader import data, browsers_config, headless_mode_config
+from utilities.driver_handler import DriverHandler
 from pages.selenium_training_page import SeleniumTrainingPage
 from utilities.exception_logger import log_exception
 
@@ -9,41 +9,13 @@ from utilities.exception_logger import log_exception
 class DriveSeleniumTrainingPage():
     _selenium_training_page : SeleniumTrainingPage = None
     _DRIVER = None
-    _OPTIONS = None
 
-    def __init__(self, browser, URL, headless_mode):        
-        if(browser == 'Firefox'):
-            self._OPTIONS = webdriver.FirefoxOptions().add_argument('--headless=new') if headless_mode else None
-            firefox_service = webdriver.FirefoxService(log_output='geckodriver.log')
 
-            self._DRIVER = webdriver.Firefox(options=self._OPTIONS, service=firefox_service)                        
-        elif(browser == 'Edge'):
-            self._OPTIONS = webdriver.EdgeOptions().add_argument('--headless=new') if headless_mode else None
-            edge_service = webdriver.EdgeService(log_output='geckodriver.log')
-
-            self._DRIVER = webdriver.Edge(options=self._OPTIONS, service=edge_service)
-
+    def __init__(self, driver, URL):
+        self._DRIVER = driver
         self._selenium_training_page = SeleniumTrainingPage(self._DRIVER, URL)
 
-    # Other
-    def go_to_original_tab(self, curr_window_handle):        
-        handles = self._DRIVER.window_handles
-
-        for window in handles:
-            if window != curr_window_handle:
-                self._DRIVER.switch_to.window(curr_window_handle)
-                return self
-            
-    def go_back(self):
-        self._DRIVER.back()
-        return self
-
-    def get_current_window(self):
-        return self._DRIVER.current_window_handle
-
-    def close_current_window(self):
-        self._DRIVER.close()
-    
+    # Other              
     def take_screenshot(self, dir):
         self._DRIVER.get_screenshot_as_file(dir)
 
@@ -87,13 +59,14 @@ class TestSeleniumPage():
         
 # ==========================  Init tests  =====================================
 
-MAIN_PAGE_URL = data['pages']['selenium_training_page']
+SELENIUM_TRAINING_PAGE_URL = data['pages']['selenium_training_page']
 BROWSERS = browsers_config
 HEADLESS_MODE = headless_mode_config
 
 # Test on all browsers
 for browser in BROWSERS:
-    drive_selenium_training_page = DriveSeleniumTrainingPage(browser, MAIN_PAGE_URL, HEADLESS_MODE)
+    DriverHandler.init_driver(browser, HEADLESS_MODE)
+    drive_selenium_training_page = DriveSeleniumTrainingPage(DriverHandler.get_driver(), SELENIUM_TRAINING_PAGE_URL)
 
     TestSeleniumPage.test_info_and_faqs()
     

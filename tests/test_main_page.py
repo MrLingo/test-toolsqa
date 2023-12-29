@@ -1,29 +1,19 @@
+import pytest
 import time
 import urllib3.exceptions
-from selenium import webdriver
+from utilities.driver_handler import DriverHandler
 from utilities.config_reader import data, browsers_config, headless_mode_config
 from pages.main_page import MainPage
 from utilities.exception_logger import log_exception
-import pytest
+
 
 class DriveMainPage():
     _main_page : MainPage = None
     _DRIVER = None
-    _OPTIONS = None
+    
 
-
-    def __init__(self, browser, URL, headless_mode):        
-        if(browser == 'Firefox'):
-            self._OPTIONS = webdriver.FirefoxOptions().add_argument('--headless=new') if headless_mode else None
-            firefox_service = webdriver.FirefoxService(log_output='geckodriver.log')
-
-            self._DRIVER = webdriver.Firefox(options=self._OPTIONS, service=firefox_service)                        
-        elif(browser == 'Edge'):
-            self._OPTIONS = webdriver.EdgeOptions().add_argument('--headless=new') if headless_mode else None
-            edge_service = webdriver.FirefoxService(log_output='geckodriver.log')
-
-            self._DRIVER = webdriver.Edge(options=self._OPTIONS, service=edge_service)
-
+    def __init__(self, driver, URL):
+        self._DRIVER = driver
         self._main_page = MainPage(self._DRIVER, URL)
     
 
@@ -173,7 +163,8 @@ HEADLESS_MODE = headless_mode_config
 
 # Test on all browsers
 for browser in BROWSERS:
-    drive_main_page = DriveMainPage(browser, MAIN_PAGE_URL, HEADLESS_MODE)
+    DriverHandler.init_driver(browser, HEADLESS_MODE)
+    drive_main_page = DriveMainPage(DriverHandler.get_driver(), MAIN_PAGE_URL)
 
     # Header
     TestMainPage.test_header()
