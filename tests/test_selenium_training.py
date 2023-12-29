@@ -7,19 +7,22 @@ from utilities.exception_logger import log_exception
 
 
 class DriveSeleniumTrainingPage():
-    _selenium_training_page = None
+    _selenium_training_page : SeleniumTrainingPage = None
     _DRIVER = None
     _OPTIONS = None
 
     def __init__(self, browser, URL, headless_mode):        
         if(browser == 'Firefox'):
-            self._OPTIONS = webdriver.FirefoxOptions().add_argument('--headless=new').add_argument('--disable-blink-features=AutomationControlled').add_argument('--log-path=geckodriver.log') if headless_mode else None
-            self._DRIVER = webdriver.Firefox(options=self._OPTIONS)                        
-        elif(browser == 'Edge'):
-            self._OPTIONS = webdriver.EdgeOptions().add_argument('--headless=new').add_argument('--disable-blink-features=AutomationControlled').add_argument('--log-path=geckodriver.log') if headless_mode else None
-            self._DRIVER = webdriver.Edge(options=self._OPTIONS)
+            self._OPTIONS = webdriver.FirefoxOptions().add_argument('--headless=new') if headless_mode else None
+            firefox_service = webdriver.FirefoxService(log_output='geckodriver.log')
 
-        #self._DRIVER.service = service if service else Service()
+            self._DRIVER = webdriver.Firefox(options=self._OPTIONS, service=firefox_service)                        
+        elif(browser == 'Edge'):
+            self._OPTIONS = webdriver.EdgeOptions().add_argument('--headless=new') if headless_mode else None
+            edge_service = webdriver.EdgeService(log_output='geckodriver.log')
+
+            self._DRIVER = webdriver.Edge(options=self._OPTIONS, service=edge_service)
+
         self._selenium_training_page = SeleniumTrainingPage(self._DRIVER, URL)
 
     # Other

@@ -7,7 +7,7 @@ from utilities.exception_logger import log_exception
 import pytest
 
 class DriveMainPage():
-    _main_page = None
+    _main_page : MainPage = None
     _DRIVER = None
     _OPTIONS = None
 
@@ -15,10 +15,14 @@ class DriveMainPage():
     def __init__(self, browser, URL, headless_mode):        
         if(browser == 'Firefox'):
             self._OPTIONS = webdriver.FirefoxOptions().add_argument('--headless=new') if headless_mode else None
-            self._DRIVER = webdriver.Firefox(options=self._OPTIONS)                        
+            firefox_service = webdriver.FirefoxService(log_output='geckodriver.log')
+
+            self._DRIVER = webdriver.Firefox(options=self._OPTIONS, service=firefox_service)                        
         elif(browser == 'Edge'):
             self._OPTIONS = webdriver.EdgeOptions().add_argument('--headless=new') if headless_mode else None
-            self._DRIVER = webdriver.Edge(options=self._OPTIONS)
+            edge_service = webdriver.FirefoxService(log_output='geckodriver.log')
+
+            self._DRIVER = webdriver.Edge(options=self._OPTIONS, service=edge_service)
 
         self._main_page = MainPage(self._DRIVER, URL)
     

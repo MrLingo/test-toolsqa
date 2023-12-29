@@ -7,17 +7,21 @@ import urllib3.exceptions
 import pytest
 
 class DriveEnrollPage():
-    _enroll_page = None
+    _enroll_page : EnrollPage = None
     _DRIVER = None
     _OPTIONS = None
 
     def __init__(self, browser, URL, headless_mode):        
         if(browser == 'Firefox'):
             self._OPTIONS = webdriver.FirefoxOptions().add_argument('--headless=new') if headless_mode else None
-            self._DRIVER = webdriver.Firefox(options=self._OPTIONS)                        
+            firefox_service = webdriver.FirefoxService(log_output='geckodriver.log')
+
+            self._DRIVER = webdriver.Firefox(options=self._OPTIONS, service=firefox_service)
         elif(browser == 'Edge'):
             self._OPTIONS = webdriver.EdgeOptions().add_argument('--headless=new') if headless_mode else None
-            self._DRIVER = webdriver.Edge(options=self._OPTIONS)
+            edge_service = webdriver.FirefoxService(log_output='geckodriver.log')
+
+            self._DRIVER = webdriver.Edge(options=self._OPTIONS, service=edge_service)
 
         self._enroll_page = EnrollPage(self._DRIVER, URL)
 
