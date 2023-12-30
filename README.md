@@ -1,6 +1,6 @@
 
 # Overview 
-Tests, combining Selenium Webdriver and pytest. Provides exception handling and logging and html reports.
+Tests, combining Selenium Webdriver and pytest. Provides exception handling, logging and html reports.
 
 # Dependencies
 - Python >= 3.11
