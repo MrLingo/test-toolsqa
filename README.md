@@ -10,4 +10,5 @@ Tests, combining Selenium Webdriver and pytest. Provides exception handling, log
 
 # Run:
 Navigate to root directory of the project and run in terminal:
+
 `python -m pytest --html=results/report.html tests/[page script]`
